@@ -901,6 +901,18 @@ namespace compute.geometry
                                     resthopperObjectList.Add(GetResthopperObject<Mesh>(rhValue));
                                 }
                                 break;
+                            default:
+                                try {
+                                    dynamic ghValue = goo;
+                                    dynamic rhValue = ghValue.Value;
+                                    resthopperObjectList.Add(GetResthopperObject<dynamic>(rhValue));
+                                }
+                                catch (Microsoft.CSharp.RuntimeBinder.RuntimeBinderException ex)
+                                {
+                                    //LogError(ex.ToString());
+                                    throw ex;
+                                }
+                                break;
                         }
                     }
 
