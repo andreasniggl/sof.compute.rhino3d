@@ -13,6 +13,25 @@ using Grasshopper.Kernel.Data;
 
 namespace Hops
 {
+    // returns an instance of IGH_Goo from {type,data} of a Resthopper definition (returns null if type cannot be created)
+    using GooFromResthopperCallbackType = Func<string, string, IGH_Goo>;
+
+    // allows to invoke externally defined callbacks to deserialize Resthopper definitions
+    public static class ExternalResthopperDeserializers
+    {
+        private static Dictionary<string, GooFromResthopperCallbackType> _converters = new Dictionary<string, GooFromResthopperCallbackType> ();
+
+        public static IEnumerable<GooFromResthopperCallbackType> Converters => _converters.Values;
+
+        static public void AddDeserializer( string key, GooFromResthopperCallbackType converter)
+        {
+            _converters[key] = converter;
+        }
+
+        static public void RemoveDeserializer( string key ) { _converters.Remove(key); }
+    }
+
+
     /// <summary>
     /// RemoteDefinition represents a specific "definition" or "function" that hops will call.
     /// </summary>
@@ -762,6 +781,14 @@ namespace Hops
                     if (geometry is SubD)
                         return new Grasshopper.Kernel.Types.GH_SubD(geometry as SubD);
                 }
+            }
+
+            // check for externally invoked converters
+            foreach( var converter in ExternalResthopperDeserializers.Converters)
+            {
+                var goo = converter(obj.Type, obj.Data);
+                if (goo != null)
+                    return goo;
             }
 
             throw new Exception("unable to convert resthopper data");
