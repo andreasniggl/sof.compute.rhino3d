@@ -19,7 +19,6 @@ using Serilog;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Collections;
-using Nancy.Diagnostics;
 
 namespace compute.geometry
 {
@@ -928,12 +927,6 @@ namespace compute.geometry
                 throw new System.Exceptions.PayAttentionException("Looks like you've missed something..."); // TODO
 
             return outputSchema;
-        }
-
-        
-        ResthopperObject GetFoobar<T>( GH_Goo<T> item)
-        {
-            return new ResthopperObject(item.Value);
         }
 
         private void LogRuntimeMessages(IEnumerable<IGH_ActiveObject> objects, Schema schema)
